@@ -1,0 +1,157 @@
+---
+title: 'Taller #1'
+author: "Ana Maria Cortes Salazar - Brayan Danilo Valero Salazar"
+date: '2022-03-12'
+output: html_document
+---
+```{r echo=FALSE}
+# mean: media de la variable normal
+# sd: desviación típica de la variable normal
+# lb: límite inferior del área
+# ub: límite superior del área
+# acolor: color del área
+# ...: argumentos adicionales para ser pasados a la función lines
+
+normal_area <- function(mean = 0, sd = 1, lb, ub, acolor = "lightgray", ...) {
+    x <- seq(mean - 3 * sd, mean + 3 * sd, length = 100) 
+    
+    if (missing(lb)) {
+       lb <- min(x)
+    }
+    if (missing(ub)) {
+        ub <- max(x)
+    }
+
+    x2 <- seq(lb, ub, length = 100)    
+    plot(x, dnorm(x, mean, sd), type = "n", ylab = "")
+   
+    y <- dnorm(x2, mean, sd)
+    polygon(c(lb, x2, ub), c(0, y, 0), col = acolor)
+    lines(x, dnorm(x, mean, sd), type = "l", ...)
+}
+```
+# 1. Al comparar los caracteres morfometricos de una especie de langostinos de gran importancia economica en Argentina se observaron diferencias de tamaño entre macho y hembra. En la siguiente tabla se presentan los datos (Largo total mm) de las morfometrias de machos y hembras obtenidos en diferentes recolectas (Ruiz & Mendia, 2008).
+
+```{r echo=FALSE}
+hembras <- c(183.2, 184.1, 183.0, 204.3, 176.5, 179.0, 188.3, 186.8, 202.2, 182.5, 190.0, 178.1, 193.2, 180.4, 184.3, 189.2, 189.1, 203.1, 166.8, 196.3, 193.3, 187.3, 185.8, 189.3, 195.5, 202.4, 210.8)
+```
+```{r}
+hembras
+```
+```{r echo=FALSE}
+machos <- c(140.9, 121.7, 173.8, 154.5, 109.2, 150.7, 203.3, 163.0, 137.7, 173.9, 177.4, 154.8, 177.5, 153.4, 138.7, 136.7, 165.3, 126.7, 118.9, 140.0, 192.7, 134.4, 175.0, 169.8, 153.9, 176.7, 150.0)
+```
+```{r}
+machos
+```
+```{r echo=FALSE}
+par(mfrow = c(1,2))
+hembrasSort <- sort(hembras,decreasing = FALSE)
+frq <- (max(hembrasSort) - min(hembrasSort))/5
+hist(x = hembrasSort,main="Tamaño de langostinos Hembras",col = 'purple', breaks = seq(min(hembrasSort),max(hembrasSort),frq),xlab = 'Largo en mm del langostino',ylab = 'Numero de Langostinos',ylim = c(0,10),xlim = c(min(hembras),max(hembras)))
+machosSort <- sort(machos,decreasing = FALSE)
+frq <- (max(machosSort) - min(machosSort))/5
+hist(x = machosSort,main="Tamaño de langostinos Machos",col = 'blue', breaks = seq(min(machosSort),max(machosSort),frq),xlab = 'Largo en mm del langostino',ylab = 'Numero de Langostinos',ylim = c(0,10),xlim = c(min(machos),max(machos)))
+```
+
+#### Podemos concluir  dado el  histograma del tamaño de langostinos hembras que su curtosis es Leptocurtica ya que en la region central estan concentrados todos los datos, se pueden ver que va desde el 180 al 190mm de largo y se aprecia una asimetria negativa,esto muestra que existe una pequeña agrupacion de datos hacia el lado derecho respecto a la media aritmetica; Tambien podemos concluir que con respecto a el tamaño de langostinos Machos, se logra apreciar su curtosis es platicurtica, podemos apreciar una dispercion normal de los datos, pues estos estan mas centrados entre los intervalos 160 y 180, y con una asimetria positiva, esto identifica que los datos estan distribuidos desde su punto central hacia la izquierda.
+
+```{r echo=FALSE}
+promedioH <- mean(hembras)
+sdH <- sd(hembras)
+promedioM <- mean(machos)
+sdM <- sd(machos)
+```
+```{r}
+promedioH
+sdH
+promedioM
+sdM
+```
+
+### El promedio de los langostinos hembras es de 189.066 y tiene una desviacion estandar baja de 9.831, a comparacion del promedio de los langostinos machos que tiene un promedio de 154.466 con una desviacion estandar de 23.064; esto demuestra el grado de dispercion que existe con respecto a la media de cada uno;en el caso de los machos se puede ver que hay mas grado de dispercion
+
+```{r echo=FALSE}
+alpha = 0.015
+z = qnorm(alpha)
+pH = promedioH + z * sdH / sqrt(length(hembras)) #Menor
+pH1 = promedioH - z * sdH / sqrt(length(hembras)) #Mayor
+pH
+pH1
+
+pM = promedioM + z * sdM / sqrt(length(machos)) #Menor
+PM1 = promedioM - z * sdM / sqrt(length(machos)) #Mayor
+pM
+PM1
+```
+
+### Se puede concluir que dado un nivel de confianza del 97% los langostinos hembras se presenta la media entre el intervalo de 184.9608 y 193.1725; y entre los langostinos machos se presenta la media entre 144.8341 y 164.0992
+
+```{r echo=FALSE}
+boxplot(hembras, horizontal = TRUE)
+stripchart(hembras, method = "jitter", pch = 19, add = TRUE, col = "black")
+boxplot(machos, horizontal = TRUE)
+stripchart(machos, method = "jitter", pch = 19, add = TRUE, col = "blue")
+```
+
+### Podemos concluir que la mediana de los langostinos hembras se encuentra en 189 aproximadamente, conocemos los cuartiles que estan entre 185 y 195,existen datos entre de estas limitaciones entre el Q1 y Q3, tambien podemos observar que los datos atipicos se encuentran mas entre 176 aproximadamente hasta el Q3; con una limitacion superior de aptoximadamente de 165 y el limite inferior aproximadamente de 210
+
+### En la grafica de los langostinos machos, podemos observar que tiene datos mas dispersos a comparacion de los langostimos hembras, se observa que la mediana esta aproximamente en 146, pero abarca mas datos disperos que los de la hembra
+
+```{r echo=FALSE}
+par(mfrow = c(1,3))
+plot(dnorm(0:300, mean= promedioH, sd= sdH), col="red", type = "l", ylab = "probabilidad", xlab = "tamanio de las langostas hembras (mm)", main = "Distribucion Normal("~mu ~"=188.3259,"~sigma~ "=10.2447)")
+plot(dnorm(0:300, mean= promedioM, sd= sdM), col="red", type = "l", ylab = "probabilidad", xlab = "tamanio de las langostas machos (mm)", main = "Distribucion Normal("~mu ~"=154.4667,"~sigma~ "=23.0646)")
+```
+
+# 2.En un restaurante de la ciudad se sabe que la probabilidad de que se reciba un billete de $50.000 falso es de 0.015. Si se sabe que en una semana se reciben pagos con 900 billetes de $50.000, halle la probabilidad de que:
+
+```{r echo=FALSE}
+plot(dbinom(0:900, 900,0.015), col = "black", type = "l", xlab = "Numero de billetes de $50.000 falsos", ylab = "Probabilidad", main = "Distribucion binomial (n = 900 y p = 0.015)")
+```
+
+
+```{r echo=FALSE}
+p = 0.015
+n = 900
+```
+## a. A lo sumo 25 billetes sean falsos.
+```{r echo=FALSE}
+probabilidad <- pbinom(25, n, p)
+probabilidad
+```
+## b. La cantidad de billetes falsos esté entre 20 y 30.
+```{r echo=FALSE}
+probabilidad1 <- pbinom(30, n, p) - pbinom(20, n, p)
+probabilidad1
+```
+## c. Más de 10 sean falsos
+```{r echo=FALSE}
+probabilidad2 <- pbinom(10, n, p)
+probabilidad2
+```
+# 3. Según un estudio del Departamento Nacional de Estadística -DANE-, la vida media para el quinquenio de 2010 a 2015 de los habitantes de Colombia es 76 años, con una varianza de 25. Se pretende hacer un estudio con el objetivo de extrapolar los resultados anteriores a una pequeña ciudad de 100.000 habitantes, considerando que el tiempo de sobrevida es normal.
+```{r echo=FALSE}
+media = 76
+varianza = 25
+n = 100000
+```
+## a. ¿Cuántos de los habitantes de la pequeña ciudad superarán previsiblemente los 92 años?
+```{r echo=FALSE}
+pnorm(92, media, varianza, lower.tail = FALSE)
+normal_area(mean = media, sd = varianza, lb = 92, acolor = rgb(0,0,1,alpha = 0.5))
+text(100000,0.01,"26.10863%")
+```
+
+## b. ¿Cuántos vivirán menos de 55 años o más de 75 años?
+```{r echo=FALSE}
+pnorm(75,media, varianza) - pnorm(55,media,varianza)
+normal_area(mean = media, sd = varianza, lb = 55, ub = 75, acolor = rgb(0,0,1,alpha=0.5))
+text(100000, 0.01, "28.35924%", srt = 90)
+```
+
+
+
+
+
+
